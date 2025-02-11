@@ -6,7 +6,7 @@ def validate_if_movie_exists(movies, title):
     """
     movie_exists = False
     for movie in movies:
-        if movie["title"].casefold() == title:
+        if movie["title"] == title:
             movie_exists = True
             break
     return movie_exists

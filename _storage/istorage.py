@@ -15,7 +15,7 @@ class IStorage(ABC):
 
 
     @abstractmethod
-    def add_movie(self, title, year, rating, poster_url):
+    def add_movie(self, title, year, rating, poster_url, imdb_id):
         """
         Adds a movie to the movies database.
         Loads the information from the JSON file, add the movie,

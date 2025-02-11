@@ -23,7 +23,7 @@ class MovieApp:
         movies = self._storage.list_movies()
         print(f"{len(movies)} movies in total")
         for movie in movies:
-            title, year, rating, _ = movie.values()
+            title, year, rating, _, _ = movie.values()
             print(f"{colored(title, 'cyan')} ({year}), {rating}")
         print()
 
@@ -48,10 +48,11 @@ class MovieApp:
             year = title_data_json["Year"]
             rating = title_data_json["imdbRating"]
             poster_url = title_data_json["Poster"]
+            imdb_id = title_data_json["imdbID"]
             if content_validation.validate_if_movie_exists(movies, title):
                 print("The movie already exists.")
             else:
-                self._storage.add_movie(title, int(year), float(rating), poster_url)
+                self._storage.add_movie(title, int(year), float(rating), poster_url, imdb_id)
                 print(colored("Your movie was successfully added!", "green"), end="\n\n")
         else:
             print("Movie not found")
@@ -110,7 +111,7 @@ class MovieApp:
 
             # A list of movies with the highest_rating and the lowest_rating
             for movie in movies:
-                title, year, rate, _ = movie.values()
+                title, year, rate, _, _ = movie.values()
                 if rate == highest_rate:
                     best_movies.append([title, year, rate])
                 elif rate == lowest_rate:
@@ -133,7 +134,7 @@ class MovieApp:
         """Suggests a random movie to the user"""
         movies = self._storage.list_movies()
         find_random_movie = random.choice(movies)
-        title, year, rating, _ = find_random_movie.values()
+        title, year, rating, _, _ = find_random_movie.values()
         print(f"Your movie for today: {colored(title, 'cyan')} ({year}), {rating}", end="\n\n")
 
 
@@ -144,7 +145,7 @@ class MovieApp:
         is_found = False
 
         for movie in movies:
-            title, year, rating, _ = movie.values()
+            title, year, rating, _, _ = movie.values()
             if search_for.casefold() in title.casefold():
                 print(f"{colored(title, 'cyan')} ({year}), {rating}")
                 is_found = True
@@ -164,7 +165,7 @@ class MovieApp:
         movies = self._storage.list_movies()
         sorted_movies = sorted(movies, key=lambda item: (-item["rating"], item["title"]))
         for movie in sorted_movies:
-            title, year, rating, _ = movie.values()
+            title, year, rating, _, _ = movie.values()
             print(f"{colored(title, 'cyan')} ({year}): {rating}")
         print()
 
@@ -209,7 +210,10 @@ class MovieApp:
             title = movie["title"]
             year = movie["year"]
             poster_url = movie["poster_url"]
-            movies_to_display += (f'<li><img class="movie-poster" src="{poster_url}">'
+            imdb_id = movie["imdb_id"]
+            rating = movie["rating"]
+            movies_to_display += (f'<li><div class="movie-title">{rating}/10 &#11088;</div>'
+                                  f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank"><img class="movie-poster" src="{poster_url}"></a>'
                                   f'<div class="movie-title">{title}</div>'
                                   f'<div class="movie-year">{year}</div></li>\n')
 

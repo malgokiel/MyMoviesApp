@@ -20,18 +20,18 @@ class StorageJson(IStorage):
                 with open(self.file_path, "r") as fileobject:
                     return json.load(fileobject)
             except FileNotFoundError:
-                with open("_data/movies.json", 'w') as fileobject:
+                with open(self.file_path, 'w') as fileobject:
                     fileobject.write("[]")
 
 
-    def add_movie(self, title, year, rating, poster_url):
+    def add_movie(self, title, year, rating, poster_url, imdb_id):
         """
         Adds a movie to the movies database.
         Loads the information from the JSON file, add the movie,
         and saves it.
         """
         movies = self.list_movies()
-        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url})
+        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url, "imdb_id": imdb_id})
 
         with open(self.file_path, "w") as fileobject:
             json.dump(movies, fileobject)
