@@ -1,4 +1,4 @@
-from istorage import IStorage
+from _storage.istorage import IStorage
 import json
 
 
@@ -20,7 +20,7 @@ class StorageJson(IStorage):
                 with open(self.file_path, "r") as fileobject:
                     return json.load(fileobject)
             except FileNotFoundError:
-                with open("movies.json", 'w') as fileobject:
+                with open("_data/movies.json", 'w') as fileobject:
                     fileobject.write("[]")
 
 

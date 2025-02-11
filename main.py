@@ -1,5 +1,5 @@
 from movie_app import MovieApp
-from storage_json import StorageJson
+from _storage.storage_json import StorageJson
 from termcolor import colored
 from getkey import getkey, keys
 
@@ -8,7 +8,7 @@ def main():
     Initializes storage and then a movie app and controls it.
     Runs the app in a loop until user terminates the program.
     """
-    storage = StorageJson('movies.json')
+    storage = StorageJson('_data/movies.json')
     movie_app = MovieApp(storage)
 
     print(colored("****** My Movies Database ******", "green", attrs=["bold"]), end="\n\n")
