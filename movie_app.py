@@ -23,7 +23,7 @@ class MovieApp:
         movies = self._storage.list_movies()
         print(f"{len(movies)} movies in total")
         for movie in movies:
-            title, year, rating, _, _ = movie.values()
+            title, year, rating, _, _, _ = movie.values()
             print(f"{colored(title, 'cyan')} ({year}), {rating}")
         print()
 
@@ -43,17 +43,20 @@ class MovieApp:
                 "Please check your Internet connection or try again later.")
             sys.exit()
 
-        if title_data_json["Response"] == 'True':
+        if title_data_json["Response"] == 'True' and title_data_json["Type"] != "series":
             title = title_data_json["Title"]
-            year = title_data_json["Year"]
-            rating = title_data_json["imdbRating"]
-            poster_url = title_data_json["Poster"]
-            imdb_id = title_data_json["imdbID"]
+            year = title_data_json.get("Year", 0)
+            rating = title_data_json.get("imdbRating", 0)
+            poster_url = title_data_json.get("Poster", "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg")
+            imdb_id = title_data_json.get("imdbID", 0)
             if content_validation.validate_if_movie_exists(movies, title):
                 print("The movie already exists.")
             else:
-                self._storage.add_movie(title, int(year), float(rating), poster_url, imdb_id)
-                print(colored("Your movie was successfully added!", "green"), end="\n\n")
+                try:
+                    self._storage.add_movie(title, int(year), float(rating), poster_url, imdb_id)
+                    print(colored("Your movie was successfully added!", "green"), end="\n\n")
+                except ValueError:
+                    print("")
         else:
             print("Movie not found")
 
@@ -71,16 +74,16 @@ class MovieApp:
 
 
     def _update_movie(self):
-        """Updates movie's rating if movie in movies"""
+        """Updates movie by adding a note if movie in movies"""
         movies = self._storage.list_movies()
-        title = input("Enter a title to change its rating: ")
+        title = input("Enter a title to update: ")
 
         if content_validation.validate_if_movie_exists(movies, title):
             while True:
-                rating = input(f"Enter new rating for '{colored(title, 'cyan')}': ")
-                if content_validation.validate_rating(rating):
-                    self._storage.update_movie(title, float(rating))
-                    print(colored("The rating was successfully updated!", "green"), end="\n\n")
+                note = input(f"Enter your note for '{colored(title, 'cyan')}': ")
+                if len(note) != 0:
+                    self._storage.update_movie(title, note)
+                    print(colored("The movie was successfully updated!", "green"), end="\n\n")
                     break
         else:
             print(colored("Sorry, this movie does not exist in the database and cannot be updated.",
@@ -111,7 +114,7 @@ class MovieApp:
 
             # A list of movies with the highest_rating and the lowest_rating
             for movie in movies:
-                title, year, rate, _, _ = movie.values()
+                title, year, rate, _, _, _ = movie.values()
                 if rate == highest_rate:
                     best_movies.append([title, year, rate])
                 elif rate == lowest_rate:
@@ -134,7 +137,7 @@ class MovieApp:
         """Suggests a random movie to the user"""
         movies = self._storage.list_movies()
         find_random_movie = random.choice(movies)
-        title, year, rating, _, _ = find_random_movie.values()
+        title, year, rating, _, _, _ = find_random_movie.values()
         print(f"Your movie for today: {colored(title, 'cyan')} ({year}), {rating}", end="\n\n")
 
 
@@ -145,7 +148,7 @@ class MovieApp:
         is_found = False
 
         for movie in movies:
-            title, year, rating, _, _ = movie.values()
+            title, year, rating, _, _, _ = movie.values()
             if search_for.casefold() in title.casefold():
                 print(f"{colored(title, 'cyan')} ({year}), {rating}")
                 is_found = True
@@ -165,7 +168,7 @@ class MovieApp:
         movies = self._storage.list_movies()
         sorted_movies = sorted(movies, key=lambda item: (-item["rating"], item["title"]))
         for movie in sorted_movies:
-            title, year, rating, _, _ = movie.values()
+            title, year, rating, _, _, _ = movie.values()
             print(f"{colored(title, 'cyan')} ({year}): {rating}")
         print()
 
@@ -213,7 +216,7 @@ class MovieApp:
             imdb_id = movie["imdb_id"]
             rating = movie["rating"]
             movies_to_display += (f'<li>'
-                                  f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank"><img class="movie-poster" src="{poster_url}"></a>'
+                                  f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank" title="EXAMPLE TITLE"><img class="movie-poster" src="{poster_url}"></a>'
                                   f'<div class="movie-title">{rating}/10 &#11088;</div>'
                                   f'<div class="movie-title">{title}</div>'
                                   f'<div class="movie-year">{year}</div>'

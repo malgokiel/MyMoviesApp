@@ -24,14 +24,14 @@ class StorageJson(IStorage):
                     fileobject.write("[]")
 
 
-    def add_movie(self, title, year, rating, poster_url, imdb_id):
+    def add_movie(self, title, year, rating, poster_url, imdb_id, note=""):
         """
         Adds a movie to the movies database.
         Loads the information from the JSON file, add the movie,
         and saves it.
         """
         movies = self.list_movies()
-        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url, "imdb_id": imdb_id})
+        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url, "imdb_id": imdb_id, "note": note})
 
         with open(self.file_path, "w") as fileobject:
             json.dump(movies, fileobject)
@@ -53,7 +53,7 @@ class StorageJson(IStorage):
             json.dump(updated_movies, fileobject)
 
 
-    def update_movie(self, title, rating):
+    def update_movie(self, title, note):
         """
         Updates a movie from the movies database.
         Loads the information from the JSON file, updates the movie,
@@ -63,7 +63,7 @@ class StorageJson(IStorage):
 
         for movie in movies:
             if movie["title"] == title:
-                movie["rating"] = rating
+                movie["note"] = note
                 break
 
         with open(self.file_path, "w") as fileobject:
