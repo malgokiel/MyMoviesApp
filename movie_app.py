@@ -212,10 +212,12 @@ class MovieApp:
             poster_url = movie["poster_url"]
             imdb_id = movie["imdb_id"]
             rating = movie["rating"]
-            movies_to_display += (f'<li><div class="movie-title">{rating}/10 &#11088;</div>'
+            movies_to_display += (f'<li>'
                                   f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank"><img class="movie-poster" src="{poster_url}"></a>'
+                                  f'<div class="movie-title">{rating}/10 &#11088;</div>'
                                   f'<div class="movie-title">{title}</div>'
-                                  f'<div class="movie-year">{year}</div></li>\n')
+                                  f'<div class="movie-year">{year}</div>'
+                                  f'</li>\n')
 
         with open("_static/index_template.html", "r") as file:
             html_content = file.read()
