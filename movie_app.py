@@ -80,11 +80,14 @@ class MovieApp:
 
         if content_validation.validate_if_movie_exists(movies, title):
             while True:
-                note = input(f"Enter your note for '{colored(title, 'cyan')}': ")
-                if len(note) != 0:
+                note = input(f"Enter your note for '{colored(title, 'cyan')}' (max 100 chars): ")
+                if 0 < len(note) <= 100:
                     self._storage.update_movie(title, note)
                     print(colored("The movie was successfully updated!", "green"), end="\n\n")
                     break
+                else:
+                    print(colored("Check the length of your note. Has too be between 1 and 100 chars.",
+                          "red"), end="\n\n")
         else:
             print(colored("Sorry, this movie does not exist in the database and cannot be updated.",
                           "red"), end="\n\n")
@@ -209,18 +212,22 @@ class MovieApp:
         movies = self._storage.list_movies()
         movies_to_display = ""
 
-        for movie in movies:
-            title = movie["title"]
-            year = movie["year"]
-            poster_url = movie["poster_url"]
-            imdb_id = movie["imdb_id"]
-            rating = movie["rating"]
-            movies_to_display += (f'<li>'
-                                  f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank" title="EXAMPLE TITLE"><img class="movie-poster" src="{poster_url}"></a>'
-                                  f'<div class="movie-title">{rating}/10 &#11088;</div>'
-                                  f'<div class="movie-title">{title}</div>'
-                                  f'<div class="movie-year">{year}</div>'
-                                  f'</li>\n')
+        if len(movies) == 0:
+            movies_to_display += '<li><div id="no-movies">There are no movies to display atm!</div></li>'
+        else:
+            for movie in movies:
+                title = movie["title"]
+                year = movie["year"]
+                poster_url = movie["poster_url"]
+                imdb_id = movie["imdb_id"]
+                rating = movie["rating"]
+                note = movie["note"]
+                movies_to_display += (f'<li>'
+                                      f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank" title="{note}"><img class="movie-poster" src="{poster_url}"></a>'
+                                      f'<div class="movie-title">{rating}/10 &#11088;</div>'
+                                      f'<div class="movie-title">{title}</div>'
+                                      f'<div class="movie-year">{year}</div>'
+                                      f'</li>\n')
 
         with open("_static/index_template.html", "r") as file:
             html_content = file.read()
