@@ -1,0 +1,6 @@
+termcolor~=2.5.0
+getkey~=0.6.5
+requests~=2.32.3
+python-dotenv~=1.0.1
+matplotlib~=3.8.4
+numpy~=1.26.4
