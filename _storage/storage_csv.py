@@ -33,9 +33,16 @@ class StorageCsv(IStorage):
         and saves it.
         """
         movies = self.list_movies()
-        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url, "imdb_id": imdb_id, "note": note})
+        movies.append({
+            "title": title,
+            "year": year,
+            "rating": rating,
+            "poster_url": poster_url,
+            "imdb_id": imdb_id,
+            "note": note})
         with open(self.file_path, "w", newline="") as fileobject:
-            writer = csv.DictWriter(fileobject, fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
+            writer = csv.DictWriter(fileobject,
+                                    fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
             writer.writeheader()
             for movie in movies:
                 writer.writerow(movie)
@@ -54,7 +61,8 @@ class StorageCsv(IStorage):
                 updated_movies.append(movie)
 
         with open(self.file_path, "w", newline="") as fileobject:
-            writer = csv.DictWriter(fileobject, fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
+            writer = csv.DictWriter(fileobject,
+                                    fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
             writer.writeheader()
             for updated_movie in updated_movies:
                 writer.writerow(updated_movie)
@@ -74,7 +82,8 @@ class StorageCsv(IStorage):
                 break
 
         with open(self.file_path, "w", newline="") as fileobject:
-            writer = csv.DictWriter(fileobject, fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
+            writer = csv.DictWriter(fileobject,
+                                    fieldnames=["title", "year", "rating", "poster_url", "imdb_id", "note"])
             writer.writeheader()
             for movie in movies:
                 writer.writerow(movie)

@@ -31,7 +31,13 @@ class StorageJson(IStorage):
         and saves it.
         """
         movies = self.list_movies()
-        movies.append({"title": title, "year": year, "rating": rating, "poster_url": poster_url, "imdb_id": imdb_id, "note": note})
+        movies.append({
+            "title": title,
+            "year": year,
+            "rating": rating,
+            "poster_url": poster_url,
+            "imdb_id": imdb_id,
+            "note": note})
 
         with open(self.file_path, "w") as fileobject:
             json.dump(movies, fileobject)

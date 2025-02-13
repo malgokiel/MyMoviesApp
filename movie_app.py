@@ -19,7 +19,9 @@ class MovieApp:
 
 
     def _list_movies(self):
-        """Lists all movies from a list"""
+        """
+        Lists all movies from a list
+        """
         movies = self._storage.list_movies()
         print(f"{len(movies)} movies in total")
         for movie in movies:
@@ -29,14 +31,20 @@ class MovieApp:
 
 
     def _add_movie(self):
-        """Appends a dictionary of movies with a passed movie"""
+        """
+        Appends a list of dictionaries of movies with a passed movie
+        """
         movies = self._storage.list_movies()
         title_to_search = input("Please enter a title: ")
         api_url = f'http://www.omdbapi.com/?apikey={API_KEY}&t={title_to_search}'
 
         try:
             response = requests.get(api_url)
-            title_data_json = response.json()
+            if response.status_code == 200:
+                title_data_json = response.json()
+            else:
+                print(f"Error occurred: {response.status_code}")
+                sys.exit()
         except requests.exceptions.ConnectionError:
             print(
                 "We were not able to connect to www.omdbapi.com. "
@@ -45,36 +53,46 @@ class MovieApp:
 
         if title_data_json["Response"] == 'True' and title_data_json["Type"] != "series":
             title = title_data_json["Title"]
-            year = title_data_json.get("Year", 0)
-            rating = title_data_json.get("imdbRating", 0)
-            poster_url = title_data_json.get("Poster", "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg")
-            imdb_id = title_data_json.get("imdbID", 0)
+            year = title_data_json["Year"]
+            rating = title_data_json["imdbRating"]
+            poster_url = title_data_json["Poster"]
+            imdb_id = title_data_json["imdbID"]
             if content_validation.validate_if_movie_exists(movies, title):
                 print("The movie already exists.")
             else:
                 try:
                     self._storage.add_movie(title, int(year), float(rating), poster_url, imdb_id)
-                    print(colored("Your movie was successfully added!", "green"), end="\n\n")
+                    print(colored(
+                        "Your movie was successfully added!",
+                        "green"), end="\n\n")
                 except ValueError:
-                    print("")
+                    print("Year or rating is not numerical. Please try another movie.")
         else:
             print("Movie not found")
 
 
     def _delete_movie(self):
-        """Deletes a movie from movies"""
+        """
+        Deletes a movie from movies
+        """
         movies = self._storage.list_movies()
         title = input("Enter a title you want to delete: ")
 
         if content_validation.validate_if_movie_exists(movies, title):
             self._storage.delete_movie(title)
-            print(colored("Your movie was successfully deleted!", "green"), end="\n\n")
+            print(colored(
+                "Your movie was successfully deleted!",
+                "green"), end="\n\n")
         else:
-            print(colored("Sorry, this movie does not exist in the database.", "red"), end="\n\n")
+            print(colored(
+                "Sorry, this movie does not exist in the database.",
+                "red"), end="\n\n")
 
 
     def _update_movie(self):
-        """Updates movie by adding a note if movie in movies"""
+        """
+        Updates movie by adding a note if movie in movies
+        """
         movies = self._storage.list_movies()
         title = input("Enter a title to update: ")
 
@@ -83,18 +101,24 @@ class MovieApp:
                 note = input(f"Enter your note for '{colored(title, 'cyan')}' (max 100 chars): ")
                 if 0 < len(note) <= 100:
                     self._storage.update_movie(title, note)
-                    print(colored("The movie was successfully updated!", "green"), end="\n\n")
+                    print(colored(
+                        "The movie was successfully updated!",
+                        "green"), end="\n\n")
                     break
                 else:
-                    print(colored("Check the length of your note. Has too be between 1 and 100 chars.",
-                          "red"), end="\n\n")
+                    print(colored(
+                        "Check the length of your note. Has too be between 1 and 100 chars.",
+                        "red"), end="\n\n")
         else:
-            print(colored("Sorry, this movie does not exist in the database and cannot be updated.",
-                          "red"), end="\n\n")
+            print(colored(
+                "Sorry, this movie does not exist in the database and cannot be updated.",
+                "red"), end="\n\n")
 
 
     def _stats(self):
-        """Displays a series of statistics"""
+        """
+        Displays a series of statistics
+        """
         movies = self._storage.list_movies()
 
         if movies:
@@ -137,7 +161,9 @@ class MovieApp:
 
 
     def _random_movie(self):
-        """Suggests a random movie to the user"""
+        """
+        Suggests a random movie to the user
+        """
         movies = self._storage.list_movies()
         find_random_movie = random.choice(movies)
         title, year, rating, _, _, _ = find_random_movie.values()
@@ -145,7 +171,9 @@ class MovieApp:
 
 
     def _search_movie(self):
-        """Puts out a list of movies matching search criteria"""
+        """
+        Puts out a list of movies matching search criteria
+        """
         movies = self._storage.list_movies()
         search_for = input("Enter part of a movie name: ")
         is_found = False
@@ -167,7 +195,9 @@ class MovieApp:
 
 
     def _movies_by_rating(self):
-        """Displays a list of all movies sorted by rating"""
+        """
+        Displays a list of all movies sorted by rating
+        """
         movies = self._storage.list_movies()
         sorted_movies = sorted(movies, key=lambda item: (-item["rating"], item["title"]))
         for movie in sorted_movies:
@@ -177,7 +207,9 @@ class MovieApp:
 
 
     def _rating_hist(self):
-        """Creates a movie rating histogram"""
+        """
+        Creates a movie rating histogram
+        """
         movies = self._storage.list_movies()
         rates = []
         for movie in movies:
@@ -194,16 +226,19 @@ class MovieApp:
 
         # Saving the histogram
         current_directory = os.getcwd()
-        saved_path = os.path.join(current_directory, 'histogram.jpg')
+        saved_path = os.path.join(current_directory, '_data', 'histogram.jpg')
         plt.savefig(saved_path)
-        print(f"Your histogram was saved to current directory: {saved_path}")
+        print(f"Your histogram was saved to: {saved_path}")
         plt.show()
 
 
     def _exit_program(self):
-        """Closes the program"""
+        """
+        Closes the program
+        """
         print("Goodbye!")
         sys.exit()
+
 
     def _generate_website(self):
         """
@@ -213,7 +248,7 @@ class MovieApp:
         movies_to_display = ""
 
         if len(movies) == 0:
-            movies_to_display += '<li><div id="no-movies">There are no movies to display atm!</div></li>'
+            movies_to_display += f'<li>\n<div id="no-movies">There are no movies to display atm!</div>\n</li>'
         else:
             for movie in movies:
                 title = movie["title"]
@@ -222,12 +257,13 @@ class MovieApp:
                 imdb_id = movie["imdb_id"]
                 rating = movie["rating"]
                 note = movie["note"]
-                movies_to_display += (f'<li>'
-                                      f'<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank" title="{note}"><img class="movie-poster" src="{poster_url}"></a>'
-                                      f'<div class="movie-title">{rating}/10 &#11088;</div>'
-                                      f'<div class="movie-title">{title}</div>'
-                                      f'<div class="movie-year">{year}</div>'
-                                      f'</li>\n')
+                movies_to_display += (f'\t<li>\n'
+                                      f'\t<a href="https://www.imdb.com/title/{imdb_id}/" target="_blank" title="{note}">'
+                                      f'\t<img class="movie-poster" src="{poster_url}"></a>\n'
+                                      f'\t<div class="movie-title">{rating}/10 &#11088;</div>\n'
+                                      f'\t<div class="movie-title">{title}</div>\n'
+                                      f'\t<div class="movie-year">{year}</div>\n'
+                                      f'\t</li>\n')
 
         with open("_static/index_template.html", "r") as file:
             html_content = file.read()
@@ -262,12 +298,15 @@ class MovieApp:
             try:
                 choice = int(input("Enter choice (0-10): "))
                 if choice < 0 or choice > 10:
-                    print(colored("Please enter a number between 1 and 10 to proceed.", "red"))
+                    print(colored(
+                        "Please enter a number between 1 and 10 to proceed.",
+                        "red"))
                 else:
                     break
             except ValueError:
-                print(colored("Please enter a number between 1 and 10 to proceed.", "red"))
-
+                print(colored(
+                    "Please enter a number between 1 and 10 to proceed.",
+                    "red"))
 
         commands = {0: self._exit_program,
                     1: self._list_movies,
@@ -281,4 +320,5 @@ class MovieApp:
                     9: self._rating_hist,
                     10: self._generate_website
                     }
+
         commands[choice]()
