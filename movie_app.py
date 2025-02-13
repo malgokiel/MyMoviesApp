@@ -148,7 +148,7 @@ class MovieApp:
                     worst_movies.append([title, year, rate])
 
             print(f"""Average rating: {average_rate}
-        Median rating: {median_rate}""")
+Median rating: {median_rate}""")
             print("Best movie:",
                   '; '.join(
                       f"{colored(movie, 'cyan')} ({year}): {rate}" for movie, year, rate in best_movies))
