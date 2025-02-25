@@ -22,14 +22,14 @@ class StorageCsv(IStorage):
                     movies = [row for row in reader]
                 return movies
             except FileNotFoundError:
-                with open("movies.csv", 'w') as fileobject:
+                with open(self.file_path, 'w') as fileobject:
                     fileobject.write("title,year,rating,poster_url")
 
 
     def add_movie(self, title, year, rating, poster_url, imdb_id, note=""):
         """
         Adds a movie to the movies database.
-        Loads the information from the JSON file, add the movie,
+        Loads the information from a CSV file, add the movie,
         and saves it.
         """
         movies = self.list_movies()
@@ -51,7 +51,7 @@ class StorageCsv(IStorage):
     def delete_movie(self, title):
         """
         Deletes a movie from the movies database.
-        Loads the information from the JSON file, deletes the movie,
+        Loads the information from a CSV file, deletes the movie,
         and saves it.
         """
         movies = self.list_movies()
@@ -71,7 +71,7 @@ class StorageCsv(IStorage):
     def update_movie(self, title, note):
         """
         Updates a movie from the movies database.
-        Loads the information from the JSON file, updates the movie,
+        Loads the information from a CSV file, updates the movie,
         and saves it.
         """
         movies = self.list_movies()

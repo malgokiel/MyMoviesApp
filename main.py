@@ -1,5 +1,6 @@
 from movie_app import MovieApp
 from _storage.storage_json import StorageJson
+from _storage.storage_csv import StorageCsv
 from termcolor import colored
 from getkey import getkey, keys
 import sys
@@ -34,7 +35,10 @@ def main():
     Runs the app in a loop until user terminates the program.
     """
     name, extension = get_file_name()
-    storage = StorageJson(f'_data/{name}.{extension}')
+    if extension == "json":
+        storage = StorageJson(f'_data/{name}.{extension}')
+    elif extension == "csv":
+        storage = StorageCsv(f'_data/{name}.{extension}')
     movie_app = MovieApp(storage)
 
     print(colored(
