@@ -20,7 +20,7 @@ def get_file_name():
         name, extension = args.filename.split(".")
     except ValueError:
         print("Incorrect argv passed.")
-        exit()
+        sys.exit(1)
 
     if extension not in ["csv", "json"]:
         print(f"File extension {extension} is currently not supported. Use '.csv' or '.json'.")

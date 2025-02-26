@@ -125,7 +125,7 @@ class MovieApp:
             # Declare vars
             rates = []
             for movie in movies:
-                rates.append(movie["rating"])
+                rates.append(float(movie["rating"]))
 
             sum_of_rates = sum(rates)
             highest_rate = max(rates)
@@ -142,9 +142,9 @@ class MovieApp:
             # A list of movies with the highest_rating and the lowest_rating
             for movie in movies:
                 title, year, rate, _, _, _ = movie.values()
-                if rate == highest_rate:
+                if float(rate) == highest_rate:
                     best_movies.append([title, year, rate])
-                elif rate == lowest_rate:
+                elif float(rate) == lowest_rate:
                     worst_movies.append([title, year, rate])
 
             print(f"""Average rating: {average_rate}
@@ -265,15 +265,19 @@ Median rating: {median_rate}""")
                                       f'\t<div class="movie-year">{year}</div>\n'
                                       f'\t</li>\n')
 
-        with open("_static/index_template.html", "r") as file:
-            html_content = file.read()
+        try:
+            with open("_static/index_template.html", "r") as file:
+                html_content = file.read()
 
-        html_content = html_content.replace("__TEMPLATE_MOVIE_GRID__", movies_to_display)
+            html_content = html_content.replace("__TEMPLATE_MOVIE_GRID__", movies_to_display)
 
-        with open("_static/index.html", "w") as file:
-            file.write(html_content)
+            with open("_static/index.html", "w") as file:
+                file.write(html_content)
 
-        print("Website was generated successfully.")
+            print("Website was generated successfully.")
+
+        except FileNotFoundError:
+            print("Generating failed. 'index_template.html' not found.")
 
 
     def run(self):
