@@ -1,6 +1,5 @@
 # ***MyMovieAPP***
-store all your fav
-orite movies in one place!
+store all your favorite movies in one place!
 
 ## Purpose
 
